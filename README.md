@@ -2,7 +2,7 @@
 
 # PDF Library on Vercel
 
-This page uploads PDFs to a **private Vercel Blob store**, lists uploaded files, and creates short-lived download links. API access requires the shared access code you configure as an environment variable.
+This app allows you to upload, list, download, **edit/replace**, **rename**, and **delete** PDFs in a **private Vercel Blob store**. API access requires the shared access code configured in your Vercel project environment variables.
 
 ## Deploy
 
