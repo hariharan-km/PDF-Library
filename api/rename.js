@@ -12,6 +12,8 @@ function authorized(req, res) {
   return true;
 }
 
+const ALLOWED_EXTS = ['pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'avif', 'ico', 'bmp'];
+
 export default async function handler(req, res) {
   if (!authorized(req, res)) return;
   if (req.method !== 'POST') {
@@ -32,16 +34,38 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Both file URL and new filename are required.' });
     }
 
-    let cleanName = String(newFilename).trim().split(/[\\/]/).pop();
-    if (!cleanName.toLowerCase().endsWith('.pdf')) {
-      cleanName += '.pdf';
+    const targetUrl = url.split('?')[0];
+    let oldExt = '';
+    try {
+      const parsedPath = new URL(targetUrl).pathname;
+      oldExt = (parsedPath.split('.').pop() || '').toLowerCase();
+    } catch (_) {
+      oldExt = (targetUrl.split('.').pop() || '').toLowerCase();
     }
 
-    if (cleanName === '.pdf' || cleanName.length < 5) {
+    let cleanName = String(newFilename).trim().split(/[\\/]/).pop();
+    const dotIndex = cleanName.lastIndexOf('.');
+    const hasExt = dotIndex > 0 && dotIndex < cleanName.length - 1;
+
+    if (!hasExt) {
+      // Retain the old extension if user didn't enter one
+      if (oldExt && ALLOWED_EXTS.includes(oldExt)) {
+        cleanName += `.${oldExt}`;
+      } else {
+        cleanName += '.pdf';
+      }
+    } else {
+      const newExt = cleanName.slice(dotIndex + 1).toLowerCase();
+      if (!ALLOWED_EXTS.includes(newExt)) {
+        return res.status(400).json({
+          error: `Extension .${newExt} is not supported. Allowed: PDF and images (${ALLOWED_EXTS.join(', ')}).`
+        });
+      }
+    }
+
+    if (cleanName.length < 3) {
       return res.status(400).json({ error: 'Please enter a valid filename.' });
     }
-
-    const targetUrl = url.split('?')[0];
 
     // 1. Copy the blob to the new pathname with private access
     const newBlob = await copy(targetUrl, cleanName, {

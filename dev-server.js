@@ -19,8 +19,20 @@ if (!fs.existsSync(LOCAL_STORAGE_DIR)) {
   fs.mkdirSync(LOCAL_STORAGE_DIR, { recursive: true });
 }
 
-const hasVercelBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+const MIME_MAP = {
+  '.pdf': 'application/pdf',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.avif': 'image/avif',
+  '.ico': 'image/x-icon',
+  '.bmp': 'image/bmp'
+};
 
+const hasVercelBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
 function checkAuth(req, res) {
   const auth = req.headers.authorization;
@@ -60,8 +72,10 @@ const server = http.createServer(async (req, res) => {
     const filename = decodeURIComponent(pathname.replace('/local-storage/', ''));
     const safePath = path.join(LOCAL_STORAGE_DIR, path.basename(filename));
     if (fs.existsSync(safePath)) {
+      const ext = path.extname(safePath).toLowerCase();
+      const contentType = MIME_MAP[ext] || 'application/octet-stream';
       res.writeHead(200, {
-        'Content-Type': 'application/pdf',
+        'Content-Type': contentType,
         'Content-Disposition': `inline; filename="${path.basename(safePath)}"`
       });
       fs.createReadStream(safePath).pipe(res);
@@ -89,7 +103,10 @@ const server = http.createServer(async (req, res) => {
     try {
       const dirFiles = fs.readdirSync(LOCAL_STORAGE_DIR);
       const list = dirFiles
-        .filter(f => f.toLowerCase().endsWith('.pdf'))
+        .filter(f => {
+          const ext = path.extname(f).toLowerCase();
+          return Boolean(MIME_MAP[ext]);
+        })
         .map(name => {
           const stats = fs.statSync(path.join(LOCAL_STORAGE_DIR, name));
           return {
@@ -124,9 +141,26 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Local Storage Fallback
-    const rawFilename = parsedUrl.searchParams.get('filename') || 'document.pdf';
+    const rawFilename = parsedUrl.searchParams.get('filename') || 'file';
     let cleanName = path.basename(rawFilename);
-    if (!cleanName.toLowerCase().endsWith('.pdf')) cleanName += '.pdf';
+    let ext = path.extname(cleanName).toLowerCase();
+
+    if (!ext) {
+      const cType = req.headers['content-type'] || '';
+      if (cType.includes('png')) ext = '.png';
+      else if (cType.includes('jpeg') || cType.includes('jpg')) ext = '.jpg';
+      else if (cType.includes('webp')) ext = '.webp';
+      else if (cType.includes('gif')) ext = '.gif';
+      else if (cType.includes('svg')) ext = '.svg';
+      else ext = '.pdf';
+      cleanName += ext;
+    }
+
+    if (!MIME_MAP[ext]) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: `File extension ${ext} not supported. Allowed: PDF and images.` }));
+      return;
+    }
 
     const dest = path.join(LOCAL_STORAGE_DIR, cleanName);
     const writeStream = fs.createWriteStream(dest);
@@ -172,8 +206,19 @@ const server = http.createServer(async (req, res) => {
     }
 
     const oldName = path.basename(decodeURIComponent(url.replace('/local-storage/', '')));
+    const oldExt = path.extname(oldName).toLowerCase();
     let newClean = path.basename(newFilename.trim());
-    if (!newClean.toLowerCase().endsWith('.pdf')) newClean += '.pdf';
+
+    if (!path.extname(newClean)) {
+      newClean += oldExt;
+    }
+    const newExt = path.extname(newClean).toLowerCase();
+
+    if (!MIME_MAP[newExt]) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: `Unsupported file extension "${newExt}". Allowed: PDF and images.` }));
+      return;
+    }
 
     const oldPath = path.join(LOCAL_STORAGE_DIR, oldName);
     const newPath = path.join(LOCAL_STORAGE_DIR, newClean);
@@ -267,7 +312,7 @@ function startListening(port) {
   });
   server.listen(port, () => {
     console.log('----------------------------------------------------');
-    console.log('🚀 PDF Library Dev Server running!');
+    console.log('🚀 PDF & Image Library Dev Server running!');
     console.log(`📍 URL: http://localhost:${port}`);
     console.log(`🔑 Access Code: ${UPLOAD_PASSWORD}`);
     console.log(`💾 Storage Mode: ${hasVercelBlob ? 'Connected to Vercel Blob' : 'Local Storage (.local_storage)'}`);

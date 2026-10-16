@@ -1,20 +1,37 @@
-### PDF Library --->  Live Link **[pdfxlib.vercel.app.com](https://pdfxlib.vercel.app/)**
+### Doc & Media Vault (PDF & Image Library) ---> Live Link **[pdfxlib.vercel.app](https://pdfxlib.vercel.app/)**
 
-# PDF Library on Vercel
+# PDF & Image Library on Vercel
 
-This app allows you to upload, list, download, **edit/replace**, **rename**, and **delete** PDFs in a **private Vercel Blob store**. API access requires the shared access code configured in your Vercel project environment variables.
+This app allows you to upload, list, preview, download, **edit/replace**, **rename**, and **delete** both **PDFs** and **Images** (PNG, JPG, WEBP, GIF, SVG, AVIF) in a **private Vercel Blob store**. API access requires the shared access code configured in your Vercel project environment variables.
 
-## Deploy
+## Features
 
-1. Import the `outputs` folder as the project root in Vercel (or set the project Root Directory to `outputs`).
-2. In the Vercel project, create a **Private Blob** store under **Storage** and connect it to this project. Make sure the Production environment is connected.
-3. In **Settings → Environment Variables**, add `UPLOAD_PASSWORD` with a long, unique access code. Apply it to Production (and Preview if needed), then redeploy.
-4. Deploy the project. Open the deployed URL and enter the access code to view or upload PDFs.
+- **Multi-Format Support**: Upload and organize both PDF documents and images (PNG, JPG, JPEG, WEBP, GIF, SVG, AVIF).
+- **Interactive Previews**: High-resolution Lightbox image viewer and in-browser PDF reader.
+- **Dual Display Modes**: Switch between **List View** and **Grid / Gallery View**.
+- **Instant Filtering**: Filter by category (`All Files`, `PDFs`, `Images`) or live search by file name.
+- **Secure File Operations**: Rename, download, replace content, or delete with single-click confirmation.
+- **Local Development Fallback**: Built-in dev server works locally using `.local_storage` even without Vercel credentials.
 
-Vercel Blob's connected project credentials are used by the API. Do not add Blob tokens or the access code to this repository. Download links are signed and expire after 15 minutes.
+## Deploy to Vercel
+
+1. Import this repository into Vercel.
+2. In the Vercel project dashboard, create a **Blob Store** under **Storage** and connect it to your project.
+3. In **Settings → Environment Variables**, add `UPLOAD_PASSWORD` with your desired access code (e.g. `1234` or any secret password).
+4. Deploy the project. Open the deployed URL and enter your access code to view, upload, and manage your PDFs and images!
+
+## Local Development
+
+Run the local development server:
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser. Default local access code is `1234` (or whatever is set in your `.env.local`).
 
 ## Notes
 
-- Uploads are limited to 4 MB per file because this simple implementation sends each PDF through a Vercel Function; Vercel Functions have a 4.5 MB request body limit. The page refuses larger files before upload.
-- The app uses one shared access code, with no separate user accounts. Anyone who has the code can view and upload PDFs.
-- `@vercel/blob` is installed by Vercel during deployment from `package.json`.
+- Uploads are kept under 4 MB per file because Vercel Functions have a 4.5 MB request body limit.
+- The app uses one shared access code for authorized team or personal access.
+- Download links generated via Vercel Blob use signed tokens that expire securely after 15 minutes.
