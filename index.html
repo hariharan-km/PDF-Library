@@ -48,6 +48,11 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
 body {
   margin: 0;
   background: var(--wash);
@@ -55,12 +60,17 @@ body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 .wrap {
   max-width: 1140px;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 24px 80px;
+  box-sizing: border-box;
 }
 
 /* Header & Brand */
@@ -143,6 +153,9 @@ body {
   padding: 24px;
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .card:hover {
   box-shadow: var(--shadow-md);
@@ -262,9 +275,11 @@ body {
 /* Grid Layout */
 .grid {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Upload zone */
@@ -347,10 +362,14 @@ body {
   margin-top: 14px;
   font-size: 12px;
   color: var(--muted);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .tag-formats {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   gap: 4px;
+  max-width: 100%;
 }
 .format-chip {
   padding: 2px 6px;
@@ -389,6 +408,7 @@ body {
   gap: 12px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 .filter-tabs {
   display: flex;
@@ -396,6 +416,8 @@ body {
   padding: 3px;
   border-radius: var(--radius-sm);
   gap: 3px;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 .filter-tab {
   border: 0;
@@ -527,6 +549,8 @@ body {
   padding: 10px 14px;
   background: white;
   transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  min-width: 0;
+  max-width: 100%;
 }
 .file-row:hover {
   border-color: #cbd5e1;
@@ -606,12 +630,14 @@ body {
 .file-info {
   min-width: 0;
   flex: 1;
+  overflow: hidden;
 }
 .file-name-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
+  min-width: 0;
 }
 .file-name {
   font-size: 13.5px;
@@ -992,12 +1018,40 @@ body {
 @keyframes slideUp { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-@media (max-width: 860px) {
-  .wrap { padding: 24px 16px 60px; }
+@media (max-width: 960px) {
+  .wrap { padding: 30px 20px 60px; }
   .grid { grid-template-columns: 1fr; }
-  .input-row { flex-direction: column; }
+  .input-row { flex-direction: column; width: 100%; }
   .toolbar { flex-direction: column; align-items: stretch; }
-  .filter-tabs { justify-content: space-between; }
+  .filter-tabs { width: 100%; }
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 20px 14px 60px; }
+  .card { padding: 18px 14px; }
+  .top { margin-bottom: 20px; }
+  .hero h1 { font-size: 24px; }
+  .file-row {
+    padding: 10px 10px;
+    gap: 10px;
+  }
+  .file-actions {
+    gap: 4px;
+  }
+  .action-btn {
+    width: 30px;
+    height: 30px;
+  }
+  .toast-container {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    max-width: calc(100vw - 24px);
+  }
+  .toast {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
 /* GLOBAL FULLSCREEN DRAG & DROP OVERLAY */
@@ -1087,8 +1141,8 @@ body {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 420px;
-  max-width: calc(100vw - 32px);
+  width: 400px;
+  max-width: calc(100vw - 48px);
   background: #ffffff;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -1098,6 +1152,16 @@ body {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
   transform: translateY(120%);
   opacity: 0;
+  box-sizing: border-box;
+}
+@media (max-width: 600px) {
+  .upload-manager {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: calc(100vw - 24px);
+  }
 }
 .upload-manager.visible {
   transform: translateY(0);
