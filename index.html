@@ -309,6 +309,21 @@ body {
   color: var(--red);
   border: 1px solid var(--red-border);
 }
+.drop-pill.word {
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-border);
+}
+.drop-pill.sheet {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+}
+.drop-pill.slide {
+  background: var(--amber-light);
+  color: var(--amber);
+  border: 1px solid var(--amber-border);
+}
 .drop-pill.img {
   background: var(--purple-light);
   color: var(--purple);
@@ -562,6 +577,26 @@ body {
   color: var(--red);
   border: 1px solid var(--red-border);
 }
+.file-badge-icon.word {
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue-border);
+}
+.file-badge-icon.sheet {
+  background: var(--green-light);
+  color: #059669;
+  border: 1px solid var(--green-border);
+}
+.file-badge-icon.slide {
+  background: var(--amber-light);
+  color: #d97706;
+  border: 1px solid var(--amber-border);
+}
+.file-badge-icon.text {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
 .file-badge-icon.image {
   background: var(--purple-light);
   color: var(--purple);
@@ -600,6 +635,10 @@ body {
   flex: none;
 }
 .type-pill.pdf { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.type-pill.word { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+.type-pill.sheet { background: var(--green-light); color: #059669; border: 1px solid var(--green-border); }
+.type-pill.slide { background: var(--amber-light); color: #d97706; border: 1px solid var(--amber-border); }
+.type-pill.text { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 .type-pill.img { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple-border); }
 
 .file-meta {
@@ -960,6 +999,240 @@ body {
   .toolbar { flex-direction: column; align-items: stretch; }
   .filter-tabs { justify-content: space-between; }
 }
+
+/* GLOBAL FULLSCREEN DRAG & DROP OVERLAY */
+.global-drop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+}
+.global-drop-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.global-drop-card {
+  max-width: 540px;
+  width: 90%;
+  background: #ffffff;
+  border: 3px dashed var(--blue);
+  border-radius: 28px;
+  padding: 48px 32px;
+  text-align: center;
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.4);
+  transform: scale(0.92);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.global-drop-overlay.active .global-drop-card {
+  transform: scale(1);
+}
+.global-drop-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: var(--blue);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 12px 28px -6px rgba(37, 99, 235, 0.3);
+  animation: bounceDrop 1.6s infinite ease-in-out;
+}
+@keyframes bounceDrop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.global-drop-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+.global-drop-sub {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+.global-drop-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.global-drop-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: var(--ink-secondary);
+  border: 1px solid var(--line);
+}
+
+/* UPLOAD MANAGER DOCK (BOTTOM-RIGHT) */
+.upload-manager {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.05);
+  z-index: 9000;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  transform: translateY(120%);
+  opacity: 0;
+}
+.upload-manager.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.upload-manager-header {
+  padding: 13px 16px;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.upload-manager-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.upload-manager-title svg {
+  color: #38bdf8;
+}
+.upload-manager-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mgr-btn {
+  background: transparent;
+  border: 0;
+  color: #94a3b8;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease;
+}
+.mgr-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+.upload-overall-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 100%;
+  overflow: hidden;
+}
+.upload-overall-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  transition: width 0.2s ease;
+}
+.upload-manager-body {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.upload-manager.collapsed .upload-manager-body {
+  display: none;
+}
+.upload-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  transition: background 0.15s ease;
+}
+.upload-item-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  flex: none;
+}
+.upload-item-info {
+  flex: 1;
+  min-width: 0;
+}
+.upload-item-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.upload-item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.upload-item-status {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+.upload-item-progress-bar {
+  height: 3px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.upload-item-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--blue);
+  transition: width 0.15s ease;
+}
+.spin {
+  animation: spinLoader 0.9s linear infinite;
+}
+@keyframes spinLoader {
+  100% { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -978,7 +1251,7 @@ body {
       </span>
       <div class="brand-text">
         <h2>Doc & Media Vault</h2>
-        <span>PDFs & Images · Powered by Vercel Blob</span>
+        <span>Documents & Media Vault · Powered by Vercel Blob</span>
       </div>
     </div>
   </header>
@@ -988,8 +1261,8 @@ body {
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       <span>SECURE STORAGE & MEDIA VAULT</span>
     </div>
-    <h1>Manage your PDFs & Images</h1>
-    <p>Upload, preview, organize, rename, and manage your PDF documents and image files stored securely in your private Vercel Blob store.</p>
+    <h1>Manage your Documents & Media</h1>
+    <p>Upload, preview, organize, rename, and manage your documents (Word, Excel, PowerPoint, Text, PDF) and image files stored securely in your private Vercel Blob store.</p>
   </section>
 
   <!-- Access code card -->
@@ -1015,36 +1288,42 @@ body {
     <!-- Upload card -->
     <div class="card">
       <div class="card-header">
-        <h2>Upload Media</h2>
-        <p class="sub">Drag & drop your files here or select from your computer.</p>
+        <h2>Upload Documents & Media</h2>
+        <p class="sub">Drag & drop multiple files anywhere or select from your computer.</p>
       </div>
       <div class="drop" id="dropArea">
         <div class="drop-icon-group">
+          <div class="drop-pill word" title="Word Documents">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
           <div class="drop-pill pdf" title="PDF Documents">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="drop-pill sheet" title="Excel Spreadsheets">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
           </div>
           <div class="drop-pill img" title="Images">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           </div>
         </div>
-        <strong>Drop PDFs & Images here</strong>
-        <small>or click anywhere to browse files</small>
+        <strong>Drop multiple documents & media here</strong>
+        <small>Drag & drop files anywhere on the page, or click to browse</small>
         <button class="btn" id="chooseBtn" type="button">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span>Select Files</span>
         </button>
-        <input id="fileInput" type="file" accept="application/pdf,image/*,.pdf,.png,.jpg,.jpeg,.webp,.gif,.svg,.avif" multiple hidden>
+        <input id="fileInput" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.md,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,text/csv,image/*" multiple hidden>
       </div>
       <div class="upload-stats">
         <div class="tag-formats">
+          <span class="format-chip">DOCX</span>
           <span class="format-chip">PDF</span>
-          <span class="format-chip">PNG</span>
-          <span class="format-chip">JPG</span>
-          <span class="format-chip">WEBP</span>
-          <span class="format-chip">SVG</span>
-          <span class="format-chip">GIF</span>
+          <span class="format-chip">XLSX</span>
+          <span class="format-chip">PPTX</span>
+          <span class="format-chip">TXT</span>
+          <span class="format-chip">PNG / JPG</span>
         </div>
-        <span>Max 4 MB per file</span>
+        <span>Max 4 MB · Batch Upload</span>
       </div>
     </div>
 
@@ -1069,6 +1348,10 @@ body {
           <button class="filter-tab active" data-filter="all">
             <span>All Files</span>
             <span class="tab-count" id="countAll">0</span>
+          </button>
+          <button class="filter-tab" data-filter="doc">
+            <span>Documents</span>
+            <span class="tab-count" id="countDoc">0</span>
           </button>
           <button class="filter-tab" data-filter="pdf">
             <span>PDFs</span>
@@ -1129,10 +1412,10 @@ body {
       <div class="form-group" style="margin-top:20px;">
         <label class="form-label">Replace File Content (Optional)</label>
         <div class="replace-picker" id="replacePickerArea">
-          <div style="font-size:13px;color:var(--ink);font-weight:600;margin-bottom:2px;">Select a new PDF or Image to replace this file</div>
-          <div style="font-size:11.5px;color:var(--muted)">Max 4 MB · File content will be updated seamlessly</div>
+          <div style="font-size:13px;color:var(--ink);font-weight:600;margin-bottom:2px;">Select a new Document or Image to replace this file</div>
+          <div style="font-size:11.5px;color:var(--muted)">Max 4 MB · Word, Excel, PPT, PDF, Text or Image</div>
         </div>
-        <input type="file" id="replaceFileInput" accept="application/pdf,image/*,.pdf,.png,.jpg,.jpeg,.webp,.gif,.svg,.avif" hidden>
+        <input type="file" id="replaceFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.rtf,.md,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,text/plain,text/csv,image/*" hidden>
         <div class="replace-preview-box" id="replacePreview">
           <div class="replace-preview-thumb" id="replaceThumbPreview">
             <!-- Thumbnail img or doc icon injected here -->
@@ -1213,15 +1496,76 @@ body {
   </div>
 </div>
 
+<!-- Fullscreen Drag & Drop Overlay -->
+<div class="global-drop-overlay" id="globalDropOverlay">
+  <div class="global-drop-card">
+    <div class="global-drop-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+    </div>
+    <h2 class="global-drop-title">Drop Files to Upload</h2>
+    <p class="global-drop-sub">Release anywhere to upload multiple documents, PDFs, or images</p>
+    <div class="global-drop-tags">
+      <span class="global-drop-tag">📄 Word (.docx, .doc)</span>
+      <span class="global-drop-tag">📕 PDFs</span>
+      <span class="global-drop-tag">📊 Excel (.xlsx, .csv)</span>
+      <span class="global-drop-tag">📑 Slides (.pptx)</span>
+      <span class="global-drop-tag">📝 Text (.txt)</span>
+      <span class="global-drop-tag">🖼️ Images</span>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Manager Dock (Batch Progress Widget) -->
+<div class="upload-manager" id="uploadManager">
+  <div class="upload-manager-header">
+    <div class="upload-manager-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      <span id="mgrHeaderTitle">Uploading 0 files</span>
+    </div>
+    <div class="upload-manager-controls">
+      <button type="button" class="mgr-btn" id="mgrToggleBtn" title="Collapse / Expand">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <button type="button" class="mgr-btn" id="mgrCloseBtn" title="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="upload-overall-bar">
+    <div class="upload-overall-progress" id="mgrOverallBar"></div>
+  </div>
+  <div class="upload-manager-body" id="mgrItemList">
+    <!-- Batch items injected here -->
+  </div>
+</div>
+
 <script>
 let files = [];
 let activeFile = null;
 let replacementFile = null;
-let currentFilter = 'all'; // 'all' | 'pdf' | 'image'
+let currentFilter = 'all'; // 'all' | 'doc' | 'pdf' | 'image'
 let currentView = 'list';   // 'list' | 'grid'
 
-// Helper for file types
+// File classification constants & extensions
 const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'avif', 'ico', 'bmp'];
+const WORD_EXTENSIONS = ['doc', 'docx', 'dot', 'dotx'];
+const SHEET_EXTENSIONS = ['xls', 'xlsx', 'csv', 'ods'];
+const SLIDE_EXTENSIONS = ['ppt', 'pptx', 'odp'];
+const TEXT_EXTENSIONS = ['txt', 'rtf', 'md', 'json', 'log'];
+const PDF_EXTENSIONS = ['pdf'];
 
 function getFileExtension(pathname) {
   const clean = pathname.split('?')[0];
@@ -1229,28 +1573,96 @@ function getFileExtension(pathname) {
   return parts.length > 1 ? parts.pop().toLowerCase() : '';
 }
 
+function getFileTypeCategory(filename, contentType = '') {
+  const ext = getFileExtension(filename);
+  if (PDF_EXTENSIONS.includes(ext) || contentType === 'application/pdf') return 'pdf';
+  if (WORD_EXTENSIONS.includes(ext) || contentType.includes('word') || contentType.includes('document')) return 'word';
+  if (SHEET_EXTENSIONS.includes(ext) || contentType.includes('sheet') || contentType.includes('excel') || contentType.includes('csv')) return 'sheet';
+  if (SLIDE_EXTENSIONS.includes(ext) || contentType.includes('presentation') || contentType.includes('powerpoint')) return 'slide';
+  if (TEXT_EXTENSIONS.includes(ext) || (contentType && contentType.startsWith('text/'))) return 'text';
+  if (IMAGE_EXTENSIONS.includes(ext) || (contentType && contentType.startsWith('image/'))) return 'image';
+  return 'doc';
+}
+
 function isImageFile(pathname, contentType = '') {
-  const ext = getFileExtension(pathname);
-  if (IMAGE_EXTENSIONS.includes(ext)) return true;
-  return contentType && contentType.startsWith('image/');
+  return getFileTypeCategory(pathname, contentType) === 'image';
 }
 
 function isPdfFile(pathname, contentType = '') {
-  const ext = getFileExtension(pathname);
-  if (ext === 'pdf') return true;
-  return contentType && contentType === 'application/pdf';
+  return getFileTypeCategory(pathname, contentType) === 'pdf';
+}
+
+function isDocFile(pathname, contentType = '') {
+  const cat = getFileTypeCategory(pathname, contentType);
+  return cat !== 'image';
 }
 
 function getMimeType(filename) {
   const ext = getFileExtension(filename);
-  if (ext === 'pdf') return 'application/pdf';
-  if (ext === 'png') return 'image/png';
-  if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
-  if (ext === 'webp') return 'image/webp';
-  if (ext === 'gif') return 'image/gif';
-  if (ext === 'svg') return 'image/svg+xml';
-  if (ext === 'avif') return 'image/avif';
-  return 'application/octet-stream';
+  const mimeMap = {
+    pdf: 'application/pdf',
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    txt: 'text/plain',
+    csv: 'text/csv',
+    rtf: 'application/rtf',
+    md: 'text/markdown',
+    json: 'application/json',
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    webp: 'image/webp',
+    gif: 'image/gif',
+    svg: 'image/svg+xml',
+    avif: 'image/avif',
+    ico: 'image/x-icon',
+    bmp: 'image/bmp'
+  };
+  return mimeMap[ext] || 'application/octet-stream';
+}
+
+function getDocBadgeInfo(pathname) {
+  const ext = getFileExtension(pathname);
+  const cat = getFileTypeCategory(pathname);
+  const label = (ext || cat).toUpperCase();
+
+  if (cat === 'pdf') {
+    return {
+      cat: 'pdf',
+      label: 'PDF',
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+    };
+  }
+  if (cat === 'word') {
+    return {
+      cat: 'word',
+      label: label.length <= 4 ? label : 'DOC',
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+    };
+  }
+  if (cat === 'sheet') {
+    return {
+      cat: 'sheet',
+      label: label.length <= 4 ? label : 'SHEET',
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>'
+    };
+  }
+  if (cat === 'slide') {
+    return {
+      cat: 'slide',
+      label: label.length <= 4 ? label : 'PPT',
+      svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
+    };
+  }
+  return {
+    cat: 'text',
+    label: label.length <= 4 ? label : 'TXT',
+    svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>'
+  };
 }
 
 // DOM Elements
@@ -1260,6 +1672,7 @@ const chooseBtn = document.querySelector('#chooseBtn');
 const fileListContainer = document.querySelector('#fileListContainer');
 const fileCountBadge = document.querySelector('#fileCountBadge');
 const countAll = document.querySelector('#countAll');
+const countDoc = document.querySelector('#countDoc');
 const countPdf = document.querySelector('#countPdf');
 const countImg = document.querySelector('#countImg');
 const accessCodeInput = document.querySelector('#accessCode');
@@ -1272,6 +1685,15 @@ const toastContainer = document.querySelector('#toastContainer');
 const filterTabs = document.querySelectorAll('.filter-tab');
 const viewListBtn = document.querySelector('#viewListBtn');
 const viewGridBtn = document.querySelector('#viewGridBtn');
+
+// Global Drop Overlay & Upload Manager Elements
+const globalDropOverlay = document.querySelector('#globalDropOverlay');
+const uploadManager = document.querySelector('#uploadManager');
+const mgrHeaderTitle = document.querySelector('#mgrHeaderTitle');
+const mgrOverallBar = document.querySelector('#mgrOverallBar');
+const mgrItemList = document.querySelector('#mgrItemList');
+const mgrToggleBtn = document.querySelector('#mgrToggleBtn');
+const mgrCloseBtn = document.querySelector('#mgrCloseBtn');
 
 // Edit Modal Elements
 const editModal = document.querySelector('#editModal');
@@ -1352,18 +1774,19 @@ async function api(path, options = {}) {
 
 // Clean filename helper
 function getDisplayName(pathname) {
-  const raw = pathname.split(/[\\/]/).pop();
-  return raw;
+  return String(pathname).split(/[\\/]/).pop();
 }
 
 // Update file count tabs
 function updateCounts() {
   const total = files.length;
+  const docCount = files.filter(f => isDocFile(f.pathname)).length;
   const pdfCount = files.filter(f => isPdfFile(f.pathname)).length;
   const imgCount = files.filter(f => isImageFile(f.pathname)).length;
 
   fileCountBadge.textContent = `${total} file${total === 1 ? '' : 's'}`;
   countAll.textContent = total;
+  if (countDoc) countDoc.textContent = docCount;
   countPdf.textContent = pdfCount;
   countImg.textContent = imgCount;
 }
@@ -1402,6 +1825,7 @@ function render() {
     const matchesSearch = filename.includes(query);
     if (!matchesSearch) return false;
 
+    if (currentFilter === 'doc') return isDocFile(f.pathname);
     if (currentFilter === 'pdf') return isPdfFile(f.pathname);
     if (currentFilter === 'image') return isImageFile(f.pathname);
     return true;
@@ -1414,7 +1838,7 @@ function render() {
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
         </svg>
-        <div>No files yet. Upload a PDF or Image to get started.</div>
+        <div>No files yet. Upload documents (Word, PDF, Excel, Text) or images to get started.</div>
       </div>`;
     return;
   }
@@ -1444,7 +1868,7 @@ function renderListView(items) {
     const filename = getDisplayName(f.pathname);
     const ext = getFileExtension(filename).toUpperCase() || 'FILE';
     const isImg = isImageFile(f.pathname);
-    const isPdf = isPdfFile(f.pathname);
+    const badge = getDocBadgeInfo(f.pathname);
 
     const row = document.createElement('div');
     row.className = 'file-row';
@@ -1457,11 +1881,11 @@ function renderListView(items) {
       thumb.innerHTML = `<img src="${f.url}" alt="${filename}" loading="lazy" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'file-badge-icon image\\'>IMG</div>'">`;
       thumb.onclick = () => openLightbox(f);
     } else {
-      thumb.title = 'PDF Document';
+      thumb.title = `${badge.label} Document`;
       thumb.innerHTML = `
-        <div class="file-badge-icon pdf">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span>PDF</span>
+        <div class="file-badge-icon ${badge.cat}">
+          ${badge.svg}
+          <span>${badge.label}</span>
         </div>`;
       thumb.onclick = () => window.open(f.url, '_blank', 'noopener');
     }
@@ -1483,7 +1907,7 @@ function renderListView(items) {
     };
 
     const pill = document.createElement('span');
-    pill.className = `type-pill ${isImg ? 'img' : (isPdf ? 'pdf' : '')}`;
+    pill.className = `type-pill ${isImg ? 'img' : badge.cat}`;
     pill.textContent = ext;
 
     nameRow.append(name, pill);
@@ -1501,7 +1925,7 @@ function renderListView(items) {
     // Preview / View button
     const viewBtn = document.createElement('button');
     viewBtn.className = 'action-btn';
-    viewBtn.title = isImg ? 'Preview Image' : 'View PDF';
+    viewBtn.title = isImg ? 'Preview Image' : 'Open / View File';
     viewBtn.setAttribute('aria-label', `View ${filename}`);
     viewBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
     viewBtn.onclick = () => {
@@ -1554,7 +1978,7 @@ function renderGridView(items) {
     const filename = getDisplayName(f.pathname);
     const ext = getFileExtension(filename).toUpperCase() || 'FILE';
     const isImg = isImageFile(f.pathname);
-    const isPdf = isPdfFile(f.pathname);
+    const badge = getDocBadgeInfo(f.pathname);
 
     const card = document.createElement('div');
     card.className = 'grid-card';
@@ -1569,10 +1993,10 @@ function renderGridView(items) {
       preview.onclick = () => openLightbox(f);
     } else {
       preview.innerHTML = `
-        <span class="type-pill pdf grid-badge-top">PDF</span>
-        <div style="color:var(--red);display:flex;flex-direction:column;align-items:center;gap:6px">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span style="font-size:11px;font-weight:700">DOCUMENT</span>
+        <span class="type-pill ${badge.cat} grid-badge-top">${badge.label}</span>
+        <div style="color:var(--${badge.cat === 'word' ? 'blue' : (badge.cat === 'sheet' ? 'green' : (badge.cat === 'slide' ? 'amber' : 'red'))});display:flex;flex-direction:column;align-items:center;gap:6px">
+          ${badge.svg}
+          <span style="font-size:11px;font-weight:700">${badge.label}</span>
         </div>`;
       preview.onclick = () => window.open(f.url, '_blank', 'noopener');
     }
@@ -1596,7 +2020,7 @@ function renderGridView(items) {
 
     const viewBtn = document.createElement('button');
     viewBtn.className = 'action-btn';
-    viewBtn.title = 'View';
+    viewBtn.title = isImg ? 'Preview' : 'Open';
     viewBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
     viewBtn.onclick = () => {
       if (isImg) openLightbox(f);
@@ -1642,40 +2066,294 @@ async function refresh() {
   }
 }
 
-// Upload files
+// Upload a single file with XHR for real progress tracking
+function uploadSingleFileWithProgress(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const key = sessionStorage.getItem('pdf-access-code');
+    if (!key) return reject(new Error('Please enter your access code first.'));
+
+    const xhr = new XMLHttpRequest();
+    const cleanName = encodeURIComponent(file.name);
+    xhr.open('POST', `/api/upload?filename=${cleanName}`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${key}`);
+    const detectedType = file.type || getMimeType(file.name);
+    if (detectedType) xhr.setRequestHeader('Content-Type', detectedType);
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.min(99, Math.round((e.loaded / e.total) * 100));
+        onProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress(100);
+        try { resolve(JSON.parse(xhr.responseText)); } catch (_) { resolve({}); }
+      } else {
+        try {
+          const err = JSON.parse(xhr.responseText);
+          reject(new Error(err.error || `Upload failed (${xhr.status})`));
+        } catch (_) {
+          reject(new Error(`Upload failed (${xhr.status})`));
+        }
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network connection error'));
+    xhr.ontimeout = () => reject(new Error('Upload timed out'));
+    xhr.send(file);
+  });
+}
+
+// Batch multi-file upload manager
 async function addFiles(fileListToAdd) {
-  for (const f of fileListToAdd) {
-    const ext = getFileExtension(f.name);
-    const isPdf = isPdfFile(f.name, f.type);
-    const isImg = isImageFile(f.name, f.type);
+  const key = sessionStorage.getItem('pdf-access-code');
+  if (!key) {
+    showToast('Please enter your access code first to upload.', 'error');
+    accessCodeInput.focus();
+    return;
+  }
 
-    if (!isPdf && !isImg) {
-      showToast(`${f.name}: Format not supported. Please upload PDF or image files.`, 'error');
-      continue;
+  const fileArray = Array.from(fileListToAdd);
+  if (!fileArray.length) return;
+
+  // Initialize upload manager dock
+  uploadManager.classList.remove('collapsed');
+  uploadManager.classList.add('visible');
+  mgrItemList.innerHTML = '';
+  mgrOverallBar.style.width = '0%';
+
+  const items = fileArray.map((f, index) => {
+    const cat = getFileTypeCategory(f.name);
+    const badge = getDocBadgeInfo(f.name);
+    const isSupported = isDocFile(f.name, f.type) || isImageFile(f.name, f.type);
+    const isTooLarge = f.size > 4 * 1024 * 1024;
+
+    const el = document.createElement('div');
+    el.className = 'upload-item';
+    el.id = `upload-item-${index}`;
+
+    let thumbHtml = '';
+    if (cat === 'image') {
+      thumbHtml = `<div class="upload-item-thumb" style="background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border)">IMG</div>`;
+    } else {
+      const colorVar = badge.cat === 'word' ? 'blue' : (badge.cat === 'sheet' ? 'green' : (badge.cat === 'slide' ? 'amber' : 'red'));
+      thumbHtml = `<div class="upload-item-thumb" style="background:var(--${colorVar}-light);color:var(--${colorVar});border:1px solid var(--${colorVar}-border)">${badge.label}</div>`;
     }
 
-    if (f.size > 4 * 1024 * 1024) {
-      showToast(`${f.name}: Exceeds 4 MB limit.`, 'error');
-      continue;
-    }
+    el.innerHTML = `
+      ${thumbHtml}
+      <div class="upload-item-info">
+        <div class="upload-item-name" title="${f.name}">${f.name}</div>
+        <div class="upload-item-meta">
+          <span class="upload-item-status-text">${fmtBytes(f.size)} · Waiting</span>
+          <span class="upload-item-pct">0%</span>
+        </div>
+        <div class="upload-item-progress-bar">
+          <div class="upload-item-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="upload-item-status">
+        <svg class="wait-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+    `;
 
-    const detectedType = f.type || getMimeType(f.name);
+    mgrItemList.appendChild(el);
 
-    try {
-      showToast(`Uploading ${f.name}…`, 'info');
-      await api(`/api/upload?filename=${encodeURIComponent(f.name)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': detectedType },
-        body: f
-      });
-      showToast(`Uploaded ${f.name} successfully!`, 'success');
-      await refresh();
-    } catch (err) {
-      showToast(`Upload failed: ${err.message}`, 'error');
-      break;
+    return {
+      file: f,
+      index,
+      el,
+      isSupported,
+      isTooLarge,
+      progress: 0,
+      status: 'pending'
+    };
+  });
+
+  const total = items.length;
+  let completedCount = 0;
+  let successCount = 0;
+
+  function updateOverall() {
+    const totalProgress = items.reduce((sum, item) => sum + item.progress, 0);
+    const overallPct = Math.round(totalProgress / total);
+    mgrOverallBar.style.width = `${overallPct}%`;
+    mgrHeaderTitle.textContent = `Uploading ${completedCount} of ${total} files (${overallPct}%)`;
+  }
+
+  updateOverall();
+
+  // Concurrency worker queue (up to 2 concurrent uploads)
+  const CONCURRENCY = 2;
+  let currentIndex = 0;
+
+  async function worker() {
+    while (currentIndex < items.length) {
+      const item = items[currentIndex++];
+      const statusTextEl = item.el.querySelector('.upload-item-status-text');
+      const pctEl = item.el.querySelector('.upload-item-pct');
+      const fillEl = item.el.querySelector('.upload-item-progress-fill');
+      const statusIconEl = item.el.querySelector('.upload-item-status');
+
+      if (!item.isSupported) {
+        item.status = 'error';
+        item.progress = 100;
+        statusTextEl.textContent = 'Format not supported';
+        statusTextEl.style.color = 'var(--red)';
+        pctEl.textContent = 'Failed';
+        statusIconEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--red)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        completedCount++;
+        updateOverall();
+        continue;
+      }
+
+      if (item.isTooLarge) {
+        item.status = 'error';
+        item.progress = 100;
+        statusTextEl.textContent = 'Exceeds 4 MB limit';
+        statusTextEl.style.color = 'var(--red)';
+        pctEl.textContent = 'Too Large';
+        statusIconEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--red)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        completedCount++;
+        updateOverall();
+        continue;
+      }
+
+      item.status = 'uploading';
+      statusTextEl.textContent = `${fmtBytes(item.file.size)} · Uploading...`;
+      statusIconEl.innerHTML = '<svg class="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--blue)"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/></svg>';
+
+      try {
+        await uploadSingleFileWithProgress(item.file, (percent) => {
+          item.progress = percent;
+          fillEl.style.width = `${percent}%`;
+          pctEl.textContent = `${percent}%`;
+          updateOverall();
+        });
+
+        item.status = 'done';
+        item.progress = 100;
+        fillEl.style.width = '100%';
+        fillEl.style.background = 'var(--green)';
+        statusTextEl.textContent = `${fmtBytes(item.file.size)} · Done`;
+        statusTextEl.style.color = 'var(--green)';
+        pctEl.textContent = '100%';
+        statusIconEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--green)"><polyline points="20 6 9 17 4 12"/></svg>';
+        successCount++;
+      } catch (err) {
+        item.status = 'error';
+        item.progress = 100;
+        fillEl.style.background = 'var(--red)';
+        statusTextEl.textContent = err.message || 'Upload failed';
+        statusTextEl.style.color = 'var(--red)';
+        pctEl.textContent = 'Error';
+        statusIconEl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--red)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      }
+
+      completedCount++;
+      updateOverall();
     }
   }
+
+  const workers = Array.from({ length: Math.min(CONCURRENCY, items.length) }, () => worker());
+  await Promise.all(workers);
+
+  mgrOverallBar.style.width = '100%';
+  if (successCount === total) {
+    mgrHeaderTitle.textContent = `All ${total} file${total === 1 ? '' : 's'} uploaded!`;
+    showToast(`Successfully uploaded ${total} document${total === 1 ? '' : 's'}!`, 'success');
+  } else {
+    mgrHeaderTitle.textContent = `${successCount} of ${total} files uploaded`;
+    showToast(`Uploaded ${successCount} of ${total} files.`, successCount > 0 ? 'info' : 'error');
+  }
+
+  await refresh();
 }
+
+// Upload Manager Dock controls
+mgrToggleBtn.onclick = () => {
+  uploadManager.classList.toggle('collapsed');
+};
+mgrCloseBtn.onclick = () => {
+  uploadManager.classList.remove('visible');
+};
+
+// Global Drag & Drop handling (entire window)
+let dragCounter = 0;
+
+window.addEventListener('dragenter', (e) => {
+  e.preventDefault();
+  dragCounter++;
+  if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+    globalDropOverlay.classList.add('active');
+  }
+});
+
+window.addEventListener('dragleave', (e) => {
+  e.preventDefault();
+  dragCounter--;
+  if (dragCounter <= 0) {
+    dragCounter = 0;
+    globalDropOverlay.classList.remove('active');
+  }
+});
+
+window.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  if (e.dataTransfer) {
+    e.dataTransfer.dropEffect = 'copy';
+  }
+});
+
+window.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dragCounter = 0;
+  globalDropOverlay.classList.remove('active');
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+    addFiles(e.dataTransfer.files);
+  }
+});
+
+// Dropzone card events
+chooseBtn.onclick = (e) => {
+  e.stopPropagation();
+  fileInput.click();
+};
+
+fileInput.onchange = () => {
+  if (fileInput.files.length) {
+    addFiles(fileInput.files);
+    fileInput.value = '';
+  }
+};
+
+dropArea.onclick = (e) => {
+  if (e.target !== chooseBtn) fileInput.click();
+};
+
+dropArea.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropArea.classList.add('over');
+});
+
+dropArea.addEventListener('dragleave', () => {
+  dropArea.classList.remove('over');
+});
+
+dropArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  dropArea.classList.remove('over');
+  dragCounter = 0;
+  globalDropOverlay.classList.remove('active');
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+    addFiles(e.dataTransfer.files);
+  }
+});
 
 // Lightbox Modal Handling
 function openLightbox(file) {
@@ -1731,11 +2409,11 @@ replaceFileInput.onchange = () => {
   const file = replaceFileInput.files[0];
   if (!file) return;
 
-  const isPdf = isPdfFile(file.name, file.type);
+  const isDoc = isDocFile(file.name, file.type);
   const isImg = isImageFile(file.name, file.type);
 
-  if (!isPdf && !isImg) {
-    showToast('Supported files: PDF and images (PNG, JPG, WEBP, GIF, SVG).', 'error');
+  if (!isDoc && !isImg) {
+    showToast('Supported files: Documents (PDF, Word, Excel, PPT, Text) and Images.', 'error');
     replaceFileInput.value = '';
     return;
   }
@@ -1756,9 +2434,10 @@ replaceFileInput.onchange = () => {
     };
     reader.readAsDataURL(file);
   } else {
+    const badge = getDocBadgeInfo(file.name);
     replaceThumbPreview.innerHTML = `
-      <div class="file-badge-icon pdf" style="width:100%;height:100%;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <div class="file-badge-icon ${badge.cat}" style="width:100%;height:100%;">
+        ${badge.svg}
       </div>`;
   }
 
@@ -1911,34 +2590,6 @@ connectBtn.onclick = () => {
 accessCodeInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') connectBtn.click();
 });
-
-// Dropzone & File chooser
-chooseBtn.onclick = (e) => {
-  e.stopPropagation();
-  fileInput.click();
-};
-fileInput.onchange = () => {
-  if (fileInput.files.length) {
-    addFiles(fileInput.files);
-    fileInput.value = '';
-  }
-};
-
-dropArea.onclick = (e) => {
-  if (e.target !== chooseBtn) fileInput.click();
-};
-dropArea.ondragover = (e) => {
-  e.preventDefault();
-  dropArea.classList.add('over');
-};
-dropArea.ondragleave = () => dropArea.classList.remove('over');
-dropArea.ondrop = (e) => {
-  e.preventDefault();
-  dropArea.classList.remove('over');
-  if (e.dataTransfer.files.length) {
-    addFiles(e.dataTransfer.files);
-  }
-};
 
 // Initialize on page load
 const savedCode = sessionStorage.getItem('pdf-access-code');

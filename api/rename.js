@@ -12,7 +12,10 @@ function authorized(req, res) {
   return true;
 }
 
-const ALLOWED_EXTS = ['pdf', 'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'avif', 'ico', 'bmp'];
+const ALLOWED_EXTS = [
+  'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'rtf', 'md', 'json',
+  'png', 'jpg', 'jpeg', 'webp', 'gif', 'svg', 'avif', 'ico', 'bmp'
+];
 
 export default async function handler(req, res) {
   if (!authorized(req, res)) return;

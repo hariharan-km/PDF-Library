@@ -1,7 +1,20 @@
 import { put } from '@vercel/blob';
 
 const MIME_MAP = {
+  // Documents
   pdf: 'application/pdf',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  txt: 'text/plain',
+  csv: 'text/csv',
+  rtf: 'application/rtf',
+  md: 'text/markdown',
+  json: 'application/json',
+  // Images
   png: 'image/png',
   jpg: 'image/jpeg',
   jpeg: 'image/jpeg',
@@ -31,13 +44,13 @@ export default async function handler(req, res) {
 
   if (!detectedContentType) {
     return res.status(400).json({
-      error: 'Only PDF documents and image files (PNG, JPG, WEBP, GIF, SVG, AVIF) can be uploaded.'
+      error: 'File type not supported. Allowed: Documents (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV) and Images.'
     });
   }
 
   // Use valid client header contentType or detected contentType from extension
   const headerType = req.headers['content-type'];
-  const contentType = (headerType && (headerType.startsWith('image/') || headerType === 'application/pdf'))
+  const contentType = (headerType && headerType !== 'application/octet-stream')
     ? headerType
     : detectedContentType;
 

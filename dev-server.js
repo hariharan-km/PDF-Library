@@ -20,7 +20,20 @@ if (!fs.existsSync(LOCAL_STORAGE_DIR)) {
 }
 
 const MIME_MAP = {
+  // Documents
   '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.xls': 'application/vnd.ms-excel',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.ppt': 'application/vnd.ms-powerpoint',
+  '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  '.txt': 'text/plain',
+  '.csv': 'text/csv',
+  '.rtf': 'application/rtf',
+  '.md': 'text/markdown',
+  '.json': 'application/json',
+  // Images
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -158,7 +171,7 @@ const server = http.createServer(async (req, res) => {
 
     if (!MIME_MAP[ext]) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: `File extension ${ext} not supported. Allowed: PDF and images.` }));
+      res.end(JSON.stringify({ error: `File extension ${ext} not supported. Allowed: Documents (PDF, Word, Excel, PPT, Text) and Images.` }));
       return;
     }
 
@@ -216,7 +229,7 @@ const server = http.createServer(async (req, res) => {
 
     if (!MIME_MAP[newExt]) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: `Unsupported file extension "${newExt}". Allowed: PDF and images.` }));
+      res.end(JSON.stringify({ error: `Unsupported file extension "${newExt}". Allowed: Documents (PDF, Word, Excel, PPT, Text) and Images.` }));
       return;
     }
 
